@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tichu Timer</title>
+<style>
+    /* Basic styling for the clickable text */
+    body {
+        text-align: center;
+    }
+
+    #status {
+        font-size: 150px;
+    }
+
+    #clickableText {
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+        text-align: center;
+        font-size: 500px;
+    }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const statusOutput = document.getElementById("status");
+    const clickableText = document.getElementById("clickableText");
+    const player = 2
+
+    let ws;
+
+    function connect() {
+        ws = new WebSocket("ws://192.168.0.50:6790");
+
+        ws.onopen = function() {
+            statusOutput.innerHTML = `Player ${player}`;
+            clickableText.innerHTML = "T";
+            ws.send(player);
+        };
+
+        ws.onmessage = function(event) {
+            let data = JSON.parse(event.data);
+            if (!data.error) {
+                if (data.is_turn) {
+                    clickableText.innerHTML = data.time;
+                }
+                else {
+                    clickableText.innerHTML = "-";
+                }
+            }
+        };
+
+        ws.onclose = function() {
+            statusOutput.innerHTML = "Disconnected from the server";
+        };
+
+        ws.onerror = function() {
+            statusOutput.innerHTML = "Connection error";
+        };
+    }
+
+    clickableText.onclick = function() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(99);
+        }
+    };
+
+    connect(); // Establish the connection right away
+});
+</script>
+</head>
+<body>
+<h1>Tichu Timer Client</h1>
+<p id="status">Not connected</p>
+<span id="clickableText"></span>
+</body>
+</html>

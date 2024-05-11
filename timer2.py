@@ -64,7 +64,7 @@ class WebSocketServer:
                     print(f"Updated state for {websocket.remote_address}: {self.client_states[websocket]}")
                 elif data == 99 and self.client_states[websocket] in self.turn and len(self.turn) == 1: # 99 means turn end
                     self.time = 30
-                    self.turn[0] += self.turn[0]
+                    self.turn[0] += 1
                     if self.turn[0] == 5:
                         self.turn[0] = 1
                     print(f"Turn changed to {self.turn}")
@@ -83,7 +83,7 @@ class WebSocketServer:
                 await websocket.send(json.dumps(message))
                 print(f"Sent to {websocket.remote_address}: {message}")
                 await asyncio.sleep(1)
-                if (isTurn and self.time > 0):
+                if ((self.client_states[websocket] == self.turn[0]) and self.time > 0):
                     self.time -= 1
         except asyncio.CancelledError:
             print("Write loop was cancelled")

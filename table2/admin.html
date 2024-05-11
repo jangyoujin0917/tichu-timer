@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WebSocket Client</title>
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+    button {
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+<script>
+let ws;
+
+document.addEventListener("DOMContentLoaded", function() {
+    const statusOutput = document.getElementById("status");
+
+    function connect() {
+        // Update the WebSocket URL to match your server's configuration
+        ws = new WebSocket("ws://192.168.0.50:6790");
+
+        ws.onopen = function() {
+            statusOutput.innerHTML = "Connected"
+            ws.send(42);
+        };
+
+        ws.onmessage = function(event) {
+            let data = JSON.parse(event.data);
+        };
+
+        ws.onclose = function() {
+            statusOutput.innerHTML = "Disconnected from the server";
+        };
+
+        ws.onerror = function() {
+            statusOutput.innerHTML = "Connection error";
+        };
+    }
+
+    connect(); // Establish the connection right away
+});
+
+function send(num) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(num);
+    }
+};
+</script>
+</head>
+<body>
+<h1>WebSocket Client</h1>
+<p id="status">Not connected</p>
+<table>
+    <tr>
+        <th>P1</th>
+        <th>P2</th>
+        <th>P3</th>
+        <th>P4</th>
+    </tr>
+    <tr>
+        <td><button type="button" onclick="send(101)">R1</button></td>
+        <td><button type="button" onclick="send(102)">R2</button></td>
+        <td><button type="button" onclick="send(103)">R3</button></td>
+        <td><button type="button" onclick="send(104)">R4</button></td>
+    </tr>
+    <tr>
+        <td><button type="button" onclick="send(1)">T1</button></td>
+        <td><button type="button" onclick="send(2)">T2</button></td>
+        <td><button type="button" onclick="send(3)">T3</button></td>
+        <td><button type="button" onclick="send(4)">T4</button></td>
+    </tr>
+</table>
+<br/>
+<button type="button" onclick="send(200)">Mulligan</button>
+</body>
+</html>
