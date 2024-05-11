@@ -94,7 +94,7 @@ class WebSocketServer:
             await asyncio.Future()  # 서버가 영구적으로 실행되게 함
 
 async def main():
-    server = WebSocketServer('192.168.0.50', 5002)
+    server = WebSocketServer('192.168.0.50', 6790)
     await server.run()
 
 if __name__ == "__main__":
